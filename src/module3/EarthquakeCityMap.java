@@ -8,7 +8,7 @@ import java.util.List;
 
 //Processing library
 import processing.core.PApplet;
-
+import processing.core.PGraphics;
 //Unfolding libraries
 import de.fhpotsdam.unfolding.UnfoldingMap;
 import de.fhpotsdam.unfolding.marker.Marker;
@@ -24,7 +24,7 @@ import parsing.ParseFeed;
 /** EarthquakeCityMap
  * An application with an interactive map displaying earthquake data.
  * Author: UC San Diego Intermediate Software Development MOOC team
- * @author Your name here
+ * @author Mahendra Singh Thapa.
  * Date: July 17, 2015
  * */
 public class EarthquakeCityMap extends PApplet {
@@ -47,20 +47,19 @@ public class EarthquakeCityMap extends PApplet {
 	private UnfoldingMap map;
 	
 	//feed with magnitude 2.5+ Earthquakes
-	private String earthquakesURL = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.atom";
+	private String earthquakesURL = "../data/2.5_week.atom";
 
+	private PGraphics pg;
 	
 	public void setup() {
 		size(950, 600, OPENGL);
 
 		if (offline) {
-		    map = new UnfoldingMap(this, 200, 50, 700, 500, new MBTilesMapProvider(mbTilesString));
+		    map = new UnfoldingMap(this, 400, 50, 700, 500, new MBTilesMapProvider(mbTilesString));
 		    earthquakesURL = "2.5_week.atom"; 	// Same feed, saved Aug 7, 2015, for working offline
 		}
 		else {
-			map = new UnfoldingMap(this, 200, 50, 700, 500, new Google.GoogleMapProvider());
-			// IF YOU WANT TO TEST WITH A LOCAL FILE, uncomment the next line
-			//earthquakesURL = "2.5_week.atom";
+			map = new UnfoldingMap(this, 400, 50, 700, 500, new Google.GoogleMapProvider());
 		}
 		
 	    map.zoomToLevel(2);
@@ -73,30 +72,36 @@ public class EarthquakeCityMap extends PApplet {
 	    //PointFeatures have a getLocation method
 	    List<PointFeature> earthquakes = ParseFeed.parseEarthquake(this, earthquakesURL);
 	    
-	    // These print statements show you (1) all of the relevant properties 
-	    // in the features, and (2) how to get one property and use it
-	    if (earthquakes.size() > 0) {
-	    	PointFeature f = earthquakes.get(0);
-	    	System.out.println(f.getProperties());
-	    	Object magObj = f.getProperty("magnitude");
-	    	float mag = Float.parseFloat(magObj.toString());
-	    	// PointFeatures also have a getLocation method
+	    for(PointFeature pointFeature : earthquakes){
+	    	markers.add(this.createMarker(pointFeature));
 	    }
+	    
 	    
 	    // Here is an example of how to use Processing's color method to generate 
 	    // an int that represents the color yellow.  
+	    int red = color(255,0,0);
 	    int yellow = color(255, 255, 0);
+	    int blue = color(0,0,255);
+
+	    for(Marker marker : markers){
+	    	
+	    	float magnitude = (Float)marker.getProperty("magnitude");
+	    	
+	    	if(magnitude > 5.0)
+	    		marker.setColor(red);
+	    	else if(magnitude > 4.0)
+	    		marker.setColor(yellow);
+	    	else 
+	    		marker.setColor(blue);
+	    }
 	    
-	    //TODO: Add code here as appropriate
+	    map.addMarkers(markers);
+	    pg = createGraphics(250, 200);
 	}
 		
-	// A suggested helper method that takes in an earthquake feature and 
-	// returns a SimplePointMarker for that earthquake
-	// TODO: Implement this method and call it from setUp, if it helps
 	private SimplePointMarker createMarker(PointFeature feature)
 	{
-		// finish implementing and use this method, if it helps.
-		return new SimplePointMarker(feature.getLocation());
+		return new SimplePointMarker(feature.getLocation(), feature.getProperties());
 	}
 	
 	public void draw() {
@@ -107,10 +112,39 @@ public class EarthquakeCityMap extends PApplet {
 
 
 	// helper method to draw key in GUI
-	// TODO: Implement this method to draw the key
 	private void addKey() 
 	{	
-		// Remember you can use Processing's graphics methods here
-	
+
+		  pg.beginDraw();
+		  pg.background(255);
+		  
+		  pg.fill(0,0,0);
+		  pg.textSize(20);
+		  pg.text("Earthquake Key", 50, 60);
+		  
+		  pg.fill(255, 0, 0);
+		  pg.ellipse(50, 80, 20, 20);
+		  
+		  pg.fill(0,0,0);
+		  pg.textSize(10);
+		  pg.text("5.0 + Magnitude", 90, 90);
+		  
+		  pg.fill(255, 255, 0);
+		  pg.ellipse(50, 110, 15, 15);
+		  
+		  pg.fill(0,0,0);
+		  pg.textSize(10);
+		  pg.text("4.0 + Magnitude", 90, 115);
+		  
+		  pg.fill(0, 0, 255);
+		  pg.ellipse(50, 135, 10, 10);
+		  
+		  pg.fill(0,0,0);
+		  pg.textSize(10);
+		  pg.text("Below 4.0", 90, 135);
+		  
+		  pg.endDraw();
+		  image(pg, 50, 60); 
+		  
 	}
 }
