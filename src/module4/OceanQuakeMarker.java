@@ -10,6 +10,8 @@ import processing.core.PGraphics;
  *
  */
 public class OceanQuakeMarker extends EarthquakeMarker {
+
+	private static final int SIZE = 10;
 	
 	public OceanQuakeMarker(PointFeature quake) {
 		super(quake);
@@ -28,9 +30,8 @@ public class OceanQuakeMarker extends EarthquakeMarker {
 		
 		// HINT: Notice the radius variable in the EarthquakeMarker class
 		// and how it is set in the EarthquakeMarker constructor
-		
-		// TODO: Implement this method
-		
+	
+		pg.rect(x-SIZE/2, y-SIZE/2, SIZE, SIZE);
 	}
 	
 

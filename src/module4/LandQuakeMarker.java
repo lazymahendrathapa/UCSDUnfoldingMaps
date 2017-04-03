@@ -10,7 +10,8 @@ import processing.core.PGraphics;
  *
  */
 public class LandQuakeMarker extends EarthquakeMarker {
-	
+
+	private static final int SIZE = 10;
 	
 	public LandQuakeMarker(PointFeature quake) {
 		
@@ -32,7 +33,7 @@ public class LandQuakeMarker extends EarthquakeMarker {
 		// HINT: Notice the radius variable in the EarthquakeMarker class
 		// and how it is set in the EarthquakeMarker constructor
 		
-		// TODO: Implement this method
+		pg.ellipse(x, y, SIZE, SIZE);
 		
 	}
 	
