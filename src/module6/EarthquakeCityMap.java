@@ -2,6 +2,7 @@ package module6;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import de.fhpotsdam.unfolding.UnfoldingMap;
@@ -12,6 +13,7 @@ import de.fhpotsdam.unfolding.geo.Location;
 import de.fhpotsdam.unfolding.marker.AbstractShapeMarker;
 import de.fhpotsdam.unfolding.marker.Marker;
 import de.fhpotsdam.unfolding.marker.MultiMarker;
+import de.fhpotsdam.unfolding.marker.SimplePointMarker;
 import de.fhpotsdam.unfolding.providers.Google;
 import de.fhpotsdam.unfolding.providers.MBTilesMapProvider;
 import de.fhpotsdam.unfolding.utils.MapUtils;
@@ -47,8 +49,8 @@ public class EarthquakeCityMap extends PApplet {
 	private String earthquakesURL = "http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.atom";
 	
 	// The files containing city names and info and country names and info
-	private String cityFile = "city-data.json";
-	private String countryFile = "countries.geo.json";
+	private String cityFile = "../data/city-data.json";
+	private String countryFile = "../data/countries.geo.json";
 	
 	// The map
 	private UnfoldingMap map;
@@ -75,17 +77,17 @@ public class EarthquakeCityMap extends PApplet {
 		else {
 			map = new UnfoldingMap(this, 200, 50, 650, 600, new Google.GoogleMapProvider());
 			// IF YOU WANT TO TEST WITH A LOCAL FILE, uncomment the next line
-		    //earthquakesURL = "2.5_week.atom";
+		    earthquakesURL = "../data/2.5_week.atom";
 		}
 		MapUtils.createDefaultEventDispatcher(this, map);
 		
 		// FOR TESTING: Set earthquakesURL to be one of the testing files by uncommenting
 		// one of the lines below.  This will work whether you are online or offline
 		//earthquakesURL = "test1.atom";
-		//earthquakesURL = "test2.atom";
+		//earthquakesURL = "../data/test2.atom";
 		
 		// Uncomment this line to take the quiz
-		//earthquakesURL = "quiz2.atom";
+		earthquakesURL = "../data/quiz2.atom";
 		
 		
 		// (2) Reading in earthquake data and geometric properties
@@ -123,7 +125,8 @@ public class EarthquakeCityMap extends PApplet {
 	    //           for their geometric properties
 	    map.addMarkers(quakeMarkers);
 	    map.addMarkers(cityMarkers);
-	    
+	
+	   this.sortAndPrint(20);
 	    
 	}  // End setup
 	
@@ -136,8 +139,21 @@ public class EarthquakeCityMap extends PApplet {
 	}
 	
 	
-	// TODO: Add the method:
-	//   private void sortAndPrint(int numToPrint)
+	   private void sortAndPrint(int numToPrint){
+		  
+		   List<EarthquakeMarker> quakeMarkerList = new ArrayList<>();
+			EarthquakeMarker eqm;
+			for (Marker m : quakeMarkers) {
+				eqm = (EarthquakeMarker)m;
+				quakeMarkerList.add(eqm);
+			}
+			Collections.sort(quakeMarkerList);
+			int actualNumToPrint = (numToPrint >= quakeMarkerList.size() ? quakeMarkerList.size() : numToPrint); 
+			for (int index = 0; index < actualNumToPrint; index++) {
+				System.out.println(quakeMarkerList.get(index));
+			}
+	   }
+	   
 	// and then call that method from setUp
 	
 	/** Event handler that gets called automatically when the 
