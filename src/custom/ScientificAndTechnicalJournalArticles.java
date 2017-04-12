@@ -28,7 +28,7 @@ public class ScientificAndTechnicalJournalArticles extends PApplet {
 		MapUtils.createDefaultEventDispatcher(this, map);
 
 		countryArticles = loadFromCSVFile(
-				"../data/ScientificAndTechnicalJournalArticles/API_IP.JRN.ARTC.SC_DS2_en_csv_v2.csv");
+				"../data/ScientificAndTechnicalJournalArticles/API_IP.JRN.ARTC.SC_DS2_en_csv_v2.csv", 57);
 
 		countries = GeoJSONReader.loadData(this, "../data/countries.geo.json");
 		countryMarkers = MapUtils.createSimpleMarkers(countries);
@@ -36,7 +36,7 @@ public class ScientificAndTechnicalJournalArticles extends PApplet {
 		this.shadeCountries();
 	}
 
-	private Map<String, Float> loadFromCSVFile(String fileName) {
+	private Map<String, Float> loadFromCSVFile(String fileName, int column) {
 
 		Map<String, Float> resultMap = new HashMap<>();
 
@@ -47,7 +47,7 @@ public class ScientificAndTechnicalJournalArticles extends PApplet {
 			String[] columns = rows[i].split("\",\"");
 
 			try {
-				float value = Float.parseFloat(columns[57]);
+				float value = Float.parseFloat(columns[column]);
 				resultMap.put(columns[1], value);
 
 			} catch (NumberFormatException ex) {
@@ -84,9 +84,49 @@ public class ScientificAndTechnicalJournalArticles extends PApplet {
 	}
 
 	public void draw() {
-		background(0);
 		map.draw();
+		this.drawButtons();
 		addKey();
+
+	}
+
+	private void drawButtons() {
+
+		fill(255, 255, 255);
+		rect(270, 60, 50, 25);
+	
+		fill(0);
+		textAlign(LEFT, CENTER);
+		textSize(12);
+
+		text("2013 ", 280, 70);
+		
+		fill(255, 255, 255);
+		rect(270, 100, 50, 25);
+		
+		
+		fill(0);
+		textAlign(LEFT, CENTER);
+		textSize(12);
+
+		text("2003 ", 280, 110);
+		
+	}
+
+	public void mouseReleased() {
+
+		if (mouseX > 270 && mouseX < 320 && mouseY > 60 && mouseY < 85) {
+
+			countryArticles = loadFromCSVFile(
+					"../data/ScientificAndTechnicalJournalArticles/API_IP.JRN.ARTC.SC_DS2_en_csv_v2.csv", 57);
+
+		} else if (mouseX > 270 && mouseX < 320 && mouseY > 100 && mouseY < 125) {
+			countryArticles = loadFromCSVFile(
+					"../data/ScientificAndTechnicalJournalArticles/API_IP.JRN.ARTC.SC_DS2_en_csv_v2.csv", 47);
+
+		}
+
+		this.shadeCountries();
 	}
 
 	private void addKey() {
